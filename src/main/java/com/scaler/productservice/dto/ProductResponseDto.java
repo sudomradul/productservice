@@ -1,6 +1,7 @@
 package com.scaler.productservice.dto;
 
 import com.scaler.productservice.models.Category;
+import com.scaler.productservice.models.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,4 +16,18 @@ public class ProductResponseDto {
     private Double price;
     private String imageUrl;
     private String category; // we only expose the string instead of whole Category object
+
+    public ProductResponseDto()
+    {}
+    public static ProductResponseDto from(Product product)
+    {
+        ProductResponseDto productResponseDto = new ProductResponseDto();
+        productResponseDto.setDescription(product.getDescription());
+        productResponseDto.setId(product.getId());
+        productResponseDto.setPrice(product.getPrice());
+        productResponseDto.setTitle(product.getTitle());
+        productResponseDto.setCategory(product.getCategory().getName());
+        productResponseDto.setImageUrl(product.getImageUrl());
+        return productResponseDto;
+    }
 }

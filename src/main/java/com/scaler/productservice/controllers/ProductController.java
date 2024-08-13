@@ -1,6 +1,9 @@
 package com.scaler.productservice.controllers;
 
 import com.scaler.productservice.dto.ProductResponseDto;
+import com.scaler.productservice.models.Product;
+import com.scaler.productservice.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 */
 @RestController
 public class ProductController {
+    private ProductService productService;
+
+    @Autowired
+    public ProductController(ProductService productService){
+        this.productService = productService;
+    }
+
+    /* Option 1
     @GetMapping("/product/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable("id") Long id)
     {
         ProductResponseDto dummy = new ProductResponseDto(1L, "abc", "dummy pdt dto", 100.0, "www.google.com", "Apparel");
         ResponseEntity<ProductResponseDto> responseEntity = new ResponseEntity<ProductResponseDto>(dummy, HttpStatusCode.valueOf(202));
         return responseEntity;
+    }*/
+
+    @GetMapping("/product/{id}")
+    public ProductResponseDto getProductById(@PathVariable("id") Long id)
+    {
+        Product product = productService.getProductById(id);
+        return ProductResponseDto.from(product);
     }
 
     @GetMapping("/product")

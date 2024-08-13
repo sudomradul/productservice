@@ -4,23 +4,36 @@ package com.scaler.productservice.services;
 * Spring says work with Java as much as possible. - java does not support json inherently, so we need to map the api resp to java object
 * */
 
+import com.scaler.productservice.dto.FakeStoreProductResponseDto;
 import com.scaler.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+/*RestTemplate - has many methods
+* we use these methods for JSON - JAva interoperability for eg.
+* */
+
 @Service
 public class FakeStoreProductService implements ProductService{
     private RestTemplate restTemplate;
 
-    @Autowired // field injections are not suggested so we do with method, reasons aplenty (unknown to me)
+    @Autowired // Note: field injections are not suggested so we do with method, reasons aplenty (unknown to me)
     public FakeStoreProductService(RestTemplate restTemplate)
     {
         this.restTemplate = restTemplate;
         // this.restTemplate = new RestTemplate(); - to handle this manually but we let Spring control it but RestTemplate is not autowired so spring does not know about RestTemplate - we need @configuration
     }
+
+    /* Note: this is an API call being made to FakeAPI store to get a response */
     @Override
     public Product getProductById(long id) {
+        FakeStoreProductResponseDto responseDto = restTemplate.getForObject(
+                "https://fakestoreapi.com/products/" + id,
+                FakeStoreProductResponseDto.class
+        );
 
+        return responseDto.toProduct();
     }
+
 }
