@@ -2,10 +2,14 @@ package com.scaler.productservice.dto;
 
 import com.scaler.productservice.models.Category;
 import com.scaler.productservice.models.Product;
+import lombok.Getter;
+import lombok.Setter;
 
 /* Note: to interface with the fake store responses - to map JSON resp of FakeStore APIs to java objects - we are fine with tight coupling here
 * We will use it to pupulate stuff */
 
+@Getter
+@Setter
 public class FakeStoreProductResponseDto {
     private Long id;
     private String title;
