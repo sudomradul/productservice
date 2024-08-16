@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*RestTemplate - has many methods
 * we use these methods for JSON - JAva interoperability for eg.
 * */
@@ -34,6 +37,21 @@ public class FakeStoreProductService implements ProductService{
         );
 
         return responseDto.toProduct();
+    }
+
+    // Note: type erasure in generics during runtime creates trouble here so we use array instead of List<>
+    @Override
+    public List<Product> getAllProducts()
+    {
+        FakeStoreProductResponseDto[] responseDTos = restTemplate.getForObject("https://fakestoreapi.com/products",
+                FakeStoreProductResponseDto[].class
+        );
+
+        List<Product> products = new ArrayList<>();
+        for(FakeStoreProductResponseDto responseDto: responseDTos) {
+            products.add(responseDto.toProduct());
+        }
+        return products;
     }
 
 }

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
 * Notes: @RestController is a wrapper/alias of @Controller - which means spring will handle it for you.
 * @GetMapping will call a particular method when the corresponding API endpoint is hit.
@@ -47,9 +50,15 @@ public class ProductController {
     }
 
     @GetMapping("/product")
-    public String getAllProducts()
+    public List<ProductResponseDto> getAllProducts()
     {
-        return "Hello World";
+        List<Product> products = productService.getAllProducts();
+        List<ProductResponseDto> responseDtos = new ArrayList<>();
+        for(Product product: products)
+        {
+            responseDtos.add(ProductResponseDto.from(product));
+        }
+        return responseDtos;
     }
 
     public void createProduct()
