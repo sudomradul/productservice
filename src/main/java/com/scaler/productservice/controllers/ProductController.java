@@ -1,14 +1,16 @@
 package com.scaler.productservice.controllers;
 
+import com.scaler.productservice.dto.ProductRequestDto;
 import com.scaler.productservice.dto.ProductResponseDto;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +63,20 @@ public class ProductController {
         return responseDtos;
     }
 
-    public void createProduct()
+    @PostMapping("/product")
+    public ProductResponseDto createProduct(@RequestBody ProductRequestDto productRequestDto)
     {
+        // Note: It is possible that createProduct may need a different dto
+        // to differentiate resp of getProduct and createProduct
+        Product product = productService.createProduct(
+                productRequestDto.getTitle(),
+                productRequestDto.getDescription(),
+                productRequestDto.getPrice(),
+                productRequestDto.getImageUrl(),
+                productRequestDto.getCategoryName()
+        );
 
+        return ProductResponseDto.from(product);
     }
 
     public void deleteProduct()

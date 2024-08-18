@@ -4,7 +4,9 @@ package com.scaler.productservice.services;
 * Spring says work with Java as much as possible. - java does not support json inherently, so we need to map the api resp to java object
 * */
 
+import com.scaler.productservice.dto.FakeStoreProductRequestDto;
 import com.scaler.productservice.dto.FakeStoreProductResponseDto;
+import com.scaler.productservice.models.Category;
 import com.scaler.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,4 +56,22 @@ public class FakeStoreProductService implements ProductService{
         return products;
     }
 
+    @Override
+    public Product createProduct(String title, String description, Double price, String imageUrl, String categoryName)
+    {
+        FakeStoreProductRequestDto requestDto = new FakeStoreProductRequestDto();
+        requestDto.setTitle(title);
+        requestDto.setDescription(description);
+        requestDto.setPrice(price);
+        requestDto.setImage(imageUrl);
+        requestDto.setCategory(categoryName);
+
+        FakeStoreProductResponseDto responseDto = restTemplate.postForObject(
+                "https://fakestoreapi.com/products",
+                requestDto,
+                FakeStoreProductResponseDto.class // will contain ID - see fakestoreapi
+        );
+
+        return responseDto.toProduct();
+    }
 }
