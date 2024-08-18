@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
 * Notes: @RestController is a wrapper/alias of @Controller - which means spring will handle it for you.
 * @GetMapping will call a particular method when the corresponding API endpoint is hit.
