@@ -4,11 +4,16 @@ package com.scaler.productservice.services;
 * Spring says work with Java as much as possible. - java does not support json inherently, so we need to map the api resp to java object
 * */
 
+import com.scaler.productservice.dto.FakeStoreProductRequestDto;
 import com.scaler.productservice.dto.FakeStoreProductResponseDto;
+import com.scaler.productservice.models.Category;
 import com.scaler.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*RestTemplate - has many methods
 * we use these methods for JSON - JAva interoperability for eg.
@@ -36,4 +41,37 @@ public class FakeStoreProductService implements ProductService{
         return responseDto.toProduct();
     }
 
+    // Note: type erasure in generics during runtime creates trouble here so we use array instead of List<>
+    @Override
+    public List<Product> getAllProducts()
+    {
+        FakeStoreProductResponseDto[] responseDTos = restTemplate.getForObject("https://fakestoreapi.com/products",
+                FakeStoreProductResponseDto[].class
+        );
+
+        List<Product> products = new ArrayList<>();
+        for(FakeStoreProductResponseDto responseDto: responseDTos) {
+            products.add(responseDto.toProduct());
+        }
+        return products;
+    }
+
+    @Override
+    public Product createProduct(String title, String description, Double price, String imageUrl, String categoryName)
+    {
+        FakeStoreProductRequestDto requestDto = new FakeStoreProductRequestDto();
+        requestDto.setTitle(title);
+        requestDto.setDescription(description);
+        requestDto.setPrice(price);
+        requestDto.setImage(imageUrl);
+        requestDto.setCategory(categoryName);
+
+        FakeStoreProductResponseDto responseDto = restTemplate.postForObject(
+                "https://fakestoreapi.com/products",
+                requestDto,
+                FakeStoreProductResponseDto.class // will contain ID - see fakestoreapi
+        );
+
+        return responseDto.toProduct();
+    }
 }
