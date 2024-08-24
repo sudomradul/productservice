@@ -7,6 +7,8 @@ import com.scaler.productservice.dto.ProductResponseDto;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -104,11 +106,13 @@ public class ProductController {
 
     /*General: if your method knows how to handle a exception - catch it, otherwise throw it up the stack */
     @ExceptionHandler(ProductNotFoundException.class)
-    public ErrorDto handleProductNotFoundException(ProductNotFoundException exception)
+    public ResponseEntity<ErrorDto> handleProductNotFoundException(ProductNotFoundException exception)
     {
          ErrorDto errorDto = new ErrorDto();
          errorDto.setStatus("FAILURE");
          errorDto.setMessage(exception.getMessage());
-         return errorDto;
+         // lets return correct error code
+        ResponseEntity<ErrorDto> responseEntity = new ResponseEntity<>(errorDto, HttpStatusCode.valueOf(404));
+        return responseEntity;
     }
 }
