@@ -1,13 +1,14 @@
 package com.scaler.productservice.controllers;
 
+import com.scaler.productservice.ProductNotFoundException;
+import com.scaler.productservice.dto.ErrorDto;
 import com.scaler.productservice.dto.ProductRequestDto;
 import com.scaler.productservice.dto.ProductResponseDto;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,11 @@ import java.util.List;
 */
 @RestController
 public class ProductController {
+    private RestTemplate restTemplate;
     private ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService, RestTemplate restTemplate){
         this.productService = productService;
     }
 
@@ -45,7 +47,7 @@ public class ProductController {
     }*/
 
     @GetMapping("/product/{id}")
-    public ProductResponseDto getProductById(@PathVariable("id") Long id)
+    public ProductResponseDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException
     {
         Product product = productService.getProductById(id);
         return ProductResponseDto.from(product);
@@ -79,8 +81,34 @@ public class ProductController {
         return ProductResponseDto.from(product);
     }
 
+    //TODO: implement this API
     public void deleteProduct()
     {
+    }
 
+    //TODO: implement this API
+    public void partialUpdateProduct()
+    {
+    }
+
+    /* This exception handler will be used to handle the exceptions that reach the level of productController. It will handle only those which are throws from controller.
+    * This is to override spring's default exception handler. called by spring whenever a null pointer exception happens in any of the controller method */
+    @ExceptionHandler(NullPointerException.class)
+    public ErrorDto nullPointerExceptionHandler()
+    {
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setMessage("something went wrong");
+        errorDto.setStatus("FAILURE");
+        return errorDto;
+    }
+
+    /*General: if your method knows how to handle a exception - catch it, otherwise throw it up the stack */
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ErrorDto handleProductNotFoundException(ProductNotFoundException exception)
+    {
+         ErrorDto errorDto = new ErrorDto();
+         errorDto.setStatus("FAILURE");
+         errorDto.setMessage(exception.getMessage());
+         return errorDto;
     }
 }
