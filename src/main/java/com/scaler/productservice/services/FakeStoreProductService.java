@@ -23,7 +23,7 @@ import java.util.List;
 * we use these methods for JSON - JAva interoperability for eg.
 * */
 
-@Service
+@Service("FakeStoreService")
 public class FakeStoreProductService implements ProductService{
     private RestTemplate restTemplate;
 
