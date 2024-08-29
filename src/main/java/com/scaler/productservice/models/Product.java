@@ -11,12 +11,12 @@ import lombok.Setter;
 * */
 @Getter
 @Setter
-@Entity
+@Entity // to specify that its a table
 public class  Product extends BaseModel {
     private String title;
     private String description;
     private Double price;
     private String imageUrl;
     @ManyToOne
-    private Category category;
+    private Category category; // in DB we will save categoryID instead, obviously
 }
