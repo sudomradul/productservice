@@ -11,6 +11,6 @@ public interface ProductService {
     public Product getProductById(long id) throws ProductNotFoundException;
     // note: lets return Product from create product
     public Product createProduct(String title, String description, Double price, String imageUrl, String category);
-    public void partialUpdate(Long id, Product product);
+    public void partialUpdate(Long id, Product product) throws ProductNotFoundException;
     public List<Product> getAllProducts();
 }

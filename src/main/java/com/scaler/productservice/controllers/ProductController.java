@@ -4,6 +4,7 @@ import com.scaler.productservice.ProductNotFoundException;
 import com.scaler.productservice.dto.ErrorDto;
 import com.scaler.productservice.dto.ProductRequestDto;
 import com.scaler.productservice.dto.ProductResponseDto;
+import com.scaler.productservice.models.Category;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,9 +90,21 @@ public class ProductController {
     {
     }
 
-    //TODO: implement this API
-    public void partialUpdateProduct()
-    {
+    @PatchMapping("/product/{id}")
+    public void partialUpdateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto) throws ProductNotFoundException {
+        Product product = new Product();
+        product.setId(id);
+        product.setTitle(productRequestDto.getTitle());
+        product.setDescription(productRequestDto.getDescription());
+        product.setPrice(productRequestDto.getPrice());
+        product.setImageUrl(productRequestDto.getImageUrl());
+        if (productRequestDto.getCategoryName() != null)
+        {
+            Category category = new Category();
+            category.setName(productRequestDto.getCategoryName());
+            product.setCategory(category);
+        }
+        productService.partialUpdate(product.getId(), product);
     }
 
     /* This exception handler will be used to handle the exceptions that reach the level of productController. It will handle only those which are throws from controller.

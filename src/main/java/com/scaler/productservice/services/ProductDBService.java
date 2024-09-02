@@ -26,7 +26,12 @@ public class ProductDBService implements ProductService {
     }
     @Override
     public Product getProductById(long id) throws ProductNotFoundException {
-        return null;
+        Optional<Product> productOptional = productRepository.findById(id);
+        if (productOptional.isEmpty())
+        {
+            throw new ProductNotFoundException("Product with id " + id + " not found");
+        }
+        return productOptional.get();
     }
 
     @Override
@@ -42,9 +47,29 @@ public class ProductDBService implements ProductService {
         return productRepository.save(product);
     }
 
+    // repository::save() - if ID sent - then it updates else, it will save, its used for both
     @Override
-    public void partialUpdate(Long id, Product product) {
-
+    public void partialUpdate(Long id, Product product) throws ProductNotFoundException {
+        Optional<Product> productOptional = productRepository.findById(id);
+        if (productOptional.isEmpty())
+        {
+            throw new ProductNotFoundException("product you want to update not found");
+        }
+        Product productUpdate = productOptional.get();
+        if (product.getTitle() != null)
+        {
+            productUpdate.setTitle(product.getTitle());
+        }
+        if (product.getDescription() != null)
+        {
+            productUpdate.setDescription(product.getDescription());
+        }
+        // .. other attributes
+        if (product.getCategory() != null) {
+            // create a new category if this does not exist - someone may not allow new category in PATCH request, then throw error
+            productUpdate.setCategory(getCategoryFromDB(product.getCategory().getName()));
+        }
+        productRepository.save(productUpdate); // this will set as is, even null - this is handled above by getting from DB first.
     }
 
     private Category getCategoryFromDB(String categoryName)
@@ -62,6 +87,7 @@ public class ProductDBService implements ProductService {
     }
     @Override
     public List<Product> getAllProducts() {
-        return null;
+        return productRepository.findAll();
     }
+
 }
